@@ -1,0 +1,117 @@
+-- MySQL Workbench Forward Engineering 
+ 
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0; SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0; SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES'; 
+ 
+-- ---------------------------------------------------
+- 
+-- Schema mydb -- ---------------------------------------------------
+- 
+-- ---------------------------------------------------
+- 
+-- Schema coursework -- ---------------------------------------------------
+- 
+ 
+-- ---------------------------------------------------
+- 
+-- Schema coursework -- ---------------------------------------------------
+- 
+CREATE SCHEMA IF NOT EXISTS `coursework` DEFAULT CHARACTER SET utf8 ; USE `coursework` ; 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`advisor` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`advisor` (   `advId` VARCHAR(10) NOT NULL,   `advName` VARCHAR(20) NULL DEFAULT NULL,   `advPos` VARCHAR(30) NULL DEFAULT NULL,   `advDept` VARCHAR(30) NULL DEFAULT NULL,   `advTel` VARCHAR(20) NULL DEFAULT NULL,   `advRoom` VARCHAR(10) NULL DEFAULT NULL,   PRIMARY KEY (`advId`)) 
+ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`building` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`building` (   `buildingNum` VARCHAR(10) NOT NULL,   `buildingTel` VARCHAR(45) NOT NULL,   `buildingAdd` VARCHAR(45) NOT NULL,   PRIMARY KEY (`buildingNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`course` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`course` (   `courseNum` VARCHAR(10) NOT NULL,   `courseTitle` VARCHAR(45) NULL DEFAULT NULL,   `courseLeader` VARCHAR(45) NULL DEFAULT NULL,   `courseTel` VARCHAR(45) NULL DEFAULT NULL,   `courseRoomNum` VARCHAR(45) NULL DEFAULT NULL,   `courseDept` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`courseNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`flats` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`flats` (   `flatBuildingNum` VARCHAR(10) NOT NULL,   `availableBedroomAmount` VARCHAR(10) NULL DEFAULT NULL,   PRIMARY KEY (`flatBuildingNum`),   CONSTRAINT `fk_FLATS_BUILDING1` 
+    FOREIGN KEY (`flatBuildingNum`)     REFERENCES `coursework`.`building` (`buildingNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`freeroomdetail` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`freeroomdetail` (   `freePlaceNum` VARCHAR(45) NOT NULL,   `flatBuildingNum` VARCHAR(10) NOT NULL,   `freeBedroomAmount` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`freePlaceNum`),   INDEX `fk_FREEROOMDETAIL_FLATS1_idx` (`flatBuildingNum` ASC),   CONSTRAINT `fk_FREEROOMDETAIL_FLATS1`     FOREIGN KEY (`flatBuildingNum`)     REFERENCES `coursework`.`flats` (`flatBuildingNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`staff` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`staff` (   `staffNum` VARCHAR(10) NOT NULL,   `staffName` VARCHAR(30) NULL DEFAULT NULL,   `staffAdd` VARCHAR(45) NULL DEFAULT NULL,   `staffDOB` INT(11) NULL DEFAULT NULL,   `staffSex` VARCHAR(3) NULL DEFAULT NULL,   `staffPos` VARCHAR(45) NULL DEFAULT NULL,   `staffLoc` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`staffNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`hall` 
+-- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`hall` (   `hallBuildingNum` VARCHAR(10) NOT NULL,   `managerNum` VARCHAR(10) NOT NULL,   `hallName` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`hallBuildingNum`),   INDEX `fk_HALL_STAFF1_idx` (`managerNum` ASC),   CONSTRAINT `fk_HALL_BUILDING1`     FOREIGN KEY (`hallBuildingNum`)     REFERENCES `coursework`.`building` (`buildingNum`),   CONSTRAINT `fk_HALL_STAFF1`     FOREIGN KEY (`managerNum`)     REFERENCES `coursework`.`staff` (`staffNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`inspection` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`inspection` (   `insBuildingNum` VARCHAR(10) NOT NULL,   `insStaffNum` VARCHAR(10) NOT NULL,   `inspDate` DATE NOT NULL,   `inspCom` VARCHAR(100) NULL DEFAULT NULL,   `inspIndication` VARCHAR(45) NULL DEFAULT NULL,   `inspStaffName` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`insBuildingNum`, `insStaffNum`, `inspDate`),   INDEX `fk_INSPECTION_STAFF1_idx` (`insStaffNum` ASC),   INDEX `fk_INSPECTION_FLATS1_idx` (`insBuildingNum` ASC),   CONSTRAINT `fk_INSPECTION_FLATS1`     FOREIGN KEY (`insBuildingNum`)     REFERENCES `coursework`.`flats` (`flatBuildingNum`),   CONSTRAINT `fk_INSPECTION_STAFF1`     FOREIGN KEY (`insStaffNum`)     REFERENCES `coursework`.`staff` (`staffNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`room` 
+-- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`room` (   `placeNum` VARCHAR(10) NOT NULL,   `buildingNum` VARCHAR(10) NULL DEFAULT NULL,   `roomNum` VARCHAR(10) NULL DEFAULT NULL,   `rentRate` VARCHAR(10) NULL DEFAULT NULL,   PRIMARY KEY (`placeNum`),   INDEX `fk_buildingNum_idx` (`buildingNum` ASC),   CONSTRAINT `fk_buildingNum`     FOREIGN KEY (`buildingNum`)     REFERENCES `coursework`.`building` (`buildingNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`student` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`student` (   `stuNum` VARCHAR(10) NOT NULL,   `stuCourse` VARCHAR(10) NULL DEFAULT NULL,   `stuAdvId` VARCHAR(10) NULL DEFAULT NULL,   `stuName` VARCHAR(30) NULL DEFAULT NULL,   `stuAddress` VARCHAR(50) NULL DEFAULT NULL,   `stuDOB` VARCHAR(45) NULL DEFAULT NULL,   `stuSex` VARCHAR(10) NULL DEFAULT NULL,   `stuCategory` VARCHAR(45) NULL DEFAULT NULL,   `stuNat` VARCHAR(45) NULL DEFAULT NULL,   `stuSmoker` INT(11) NULL DEFAULT NULL,   `stuSpeNeeds` VARCHAR(100) NULL DEFAULT NULL,   `stuAddComments` VARCHAR(100) NULL DEFAULT NULL,   `stuStatus` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`stuNum`),   INDEX `fk_courseNum_idx` (`stuCourse` ASC),   INDEX `fk_advId_idx` (`stuAdvId` ASC),   CONSTRAINT `fk_advId`     FOREIGN KEY (`stuAdvId`)     REFERENCES `coursework`.`advisor` (`advId`),   CONSTRAINT `fk_courseNum`     FOREIGN KEY (`stuCourse`)     REFERENCES `coursework`.`course` (`courseNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`leases` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`leases` (   `leaseNum` VARCHAR(10) NOT NULL,   `leasePlaNum` VARCHAR(10) NULL DEFAULT NULL,   `leaseStuNum` VARCHAR(10) NULL DEFAULT NULL,   `leaseStuName` VARCHAR(45) NULL DEFAULT NULL,   `leaseDur` VARCHAR(45) NULL DEFAULT NULL,   `leaseAdd` VARCHAR(45) NULL DEFAULT NULL,   `leaseEnterDate` VARCHAR(45) NULL DEFAULT NULL,   `leaseLeaveDate` VARCHAR(45) NULL DEFAULT NULL,   `leaseRoomNum` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`leaseNum`),   INDEX `fk_stuNum_idx` (`leaseStuNum` ASC),   INDEX `fk_plaNum_idx` (`leasePlaNum` ASC),   CONSTRAINT `fk_plaNum`     FOREIGN KEY (`leasePlaNum`)     REFERENCES `coursework`.`room` (`placeNum`),   CONSTRAINT `fk_stuNum`     FOREIGN KEY (`leaseStuNum`)     REFERENCES `coursework`.`student` (`stuNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`invoices` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`invoices` (   `invNum` VARCHAR(10) NOT NULL,   `invStuNum` VARCHAR(10) NOT NULL,   `invLeaseNum` VARCHAR(10) NOT NULL,   `invPlaceNum` VARCHAR(10) NOT NULL,   `invSemester` VARCHAR(45) NULL DEFAULT NULL,   `invPayDue` VARCHAR(45) NULL DEFAULT NULL,   `invAdd` VARCHAR(45) NULL DEFAULT NULL,   `invAddData` VARCHAR(150) NULL DEFAULT NULL,   `invStuName` VARCHAR(45) NULL DEFAULT NULL,   `invRoomNum` VARCHAR(45) NULL DEFAULT NULL, 
+  PRIMARY KEY (`invNum`),   INDEX `fk_INVOICES_LEASES1_idx` (`invLeaseNum` ASC),   INDEX `fk_INVOICES_STUDENT1_idx` (`invStuNum` ASC),   INDEX `fk_INVOICES_ROOM1_idx` (`invPlaceNum` ASC),   CONSTRAINT `fk_INVOICES_LEASES1`     FOREIGN KEY (`invLeaseNum`)     REFERENCES `coursework`.`leases` (`leaseNum`),   CONSTRAINT `fk_INVOICES_ROOM1`     FOREIGN KEY (`invPlaceNum`)     REFERENCES `coursework`.`room` (`placeNum`),   CONSTRAINT `fk_INVOICES_STUDENT1`     FOREIGN KEY (`invStuNum`)     REFERENCES `coursework`.`student` (`stuNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+-- ---------------------------------------------------
+- 
+-- Table `coursework`.`next-of-kin` -- ---------------------------------------------------
+- 
+CREATE TABLE IF NOT EXISTS `coursework`.`next-of-kin` (   `nokStuNum` VARCHAR(10) NOT NULL,   `nokName` VARCHAR(30) NULL DEFAULT NULL,   `nokRelation` VARCHAR(45) NULL DEFAULT NULL,   `nokAdd` VARCHAR(100) NULL DEFAULT NULL,   `nokTel` VARCHAR(45) NULL DEFAULT NULL,   PRIMARY KEY (`nokStuNum`),   CONSTRAINT `fk_NEXT-OF-KIN_STUDENT1`     FOREIGN KEY (`nokStuNum`)     REFERENCES `coursework`.`student` (`stuNum`)) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8; 
+ 
+ 
+SET SQL_MODE=@OLD_SQL_MODE; SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS; SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS; 
